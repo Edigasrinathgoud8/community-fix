@@ -1,0 +1,38 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper function to get user data
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    // Users collection
+    match /users/{userId} {
+      // Users can read their own profile
+      // Officials can read any profile (simplified for now, ideally scoped to community)
+      allow read: if request.auth != null && (request.auth.uid == userId || getUserData().role == 'official');
+      // Write access is restricted to backend (Admin SDK bypasses rules)
+      allow write: if false;
+    }
+
+    // Tickets collection
+    match /tickets/{ticketId} {
+      // Users can read tickets if they belong to the same community as the ticket
+      allow read: if request.auth != null && resource.data.communityId == getUserData().communityId;
+      // Write access is restricted to backend
+      allow write: if false;
+      
+      // Comments subcollection
+      match /comments/{commentId} {
+        allow read: if request.auth != null && get(/databases/$(database)/documents/tickets/$(ticketId)).data.communityId == getUserData().communityId;
+        allow write: if false;
+      }
+    }
+    
+    // Communities collection
+    match /communities/{communityId} {
+      allow read: if request.auth != null;
+      allow write: if false;
+    }
+  }
+}
