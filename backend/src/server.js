@@ -30,10 +30,10 @@ app.get('/', (req, res) => {
   res.json({ message: 'CommunityFix API running' });
 });
 
-app.use('/api/auth', authLimiter, require('./routes/auth'));
-app.use('/api/tickets', apiLimiter, require('./routes/tickets'));
-app.use('/api/communities', apiLimiter, require('./routes/communities'));
-app.use('/api/admin', apiLimiter, require('./routes/admin'));
+app.use('/api/auth', authLimiter, require('./routes/auth.js'));
+app.use('/api/tickets', apiLimiter, require('./routes/tickets.js'));
+app.use('/api/communities', apiLimiter, require('./routes/communities.js'));
+app.use('/api/admin', apiLimiter, require('./routes/admin.js'));
 
 // Global Error Handler
 app.use((err, req, res, next) => {
