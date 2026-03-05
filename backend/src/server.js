@@ -25,15 +25,17 @@ const authLimiter = rateLimit({
   legacyHeaders: false,
 });
 
+const path = require('path');
+
 // Routes
 app.get('/', (req, res) => {
   res.json({ message: 'CommunityFix API running' });
 });
 
-app.use('/api/auth', authLimiter, require('./routes/auth.js'));
-app.use('/api/tickets', apiLimiter, require('./routes/tickets.js'));
-app.use('/api/communities', apiLimiter, require('./routes/communities.js'));
-app.use('/api/admin', apiLimiter, require('./routes/admin.js'));
+app.use('/api/auth', authLimiter, require(path.join(__dirname, 'routes', 'auth.js')));
+app.use('/api/tickets', apiLimiter, require(path.join(__dirname, 'routes', 'tickets.js')));
+app.use('/api/communities', apiLimiter, require(path.join(__dirname, 'routes', 'communities.js')));
+app.use('/api/admin', apiLimiter, require(path.join(__dirname, 'routes', 'admin.js')));
 
 // Global Error Handler
 app.use((err, req, res, next) => {
